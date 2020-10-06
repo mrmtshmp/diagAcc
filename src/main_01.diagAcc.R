@@ -228,34 +228,14 @@ imp.data_auto_imn$predict.full_dicho <-
   predict(res.rpart.auto_imn_all.full)[,"1"] > 0.5
 
 
-table(round(imp.data$predict.var.test,2), imp.data$meas.PCP_by_PCR)
-table(round(imp.data$predict.full,2), imp.data$meas.PCP_by_PCR)
-table(round(imp.data_cancer$predict.var.test_commed,2), imp.data_cancer$meas.PCP_by_PCR)
-table(round(imp.data_auto_imn$predict.full,2), imp.data_auto_imn$meas.PCP_by_PCR)
+table(round(imp.data$predict.var.test,2), imp.data[,var.y])
+table(round(imp.data$predict.full,2), imp.data[,var.y])
+table(round(imp.data_cancer$predict.var.test_commed,2), imp.data_cancer[,var.y])
+table(round(imp.data_auto_imn$predict.full,2), imp.data_auto_imn[,var.y])
 
 
-df.accuracy_predict <- function(vec.pred, vec.correct){
-  df.accuracy_predict.var.test <- 
-    data.frame(
-      Specificity = 
-        table(vec.pred, vec.correct)[1,1]/
-        sum(table(vec.pred, vec.correct)[,1]),
-      Sensitivity = 
-        table(vec.pred, vec.correct)[2,2]/
-        sum(table(vec.pred, vec.correct)[,2]),
-      NPV = 
-        table(vec.pred, vec.correct)[1,1]/
-        sum(table(vec.pred, vec.correct)[1,]),
-      PPV = 
-        table(vec.pred, vec.correct)[2,2]/
-        sum(table(vec.pred, vec.correct)[2,])
-    )
-  return(df.accuracy_predict.var.test)
-  }
-
-df.accuracy_predict(round(imp.data$predict.var.test,2), imp.data$meas.PCP_by_PCR) %>% round (3)
-df.accuracy_predict(round(imp.data$predict.full_dicho,2), imp.data$meas.PCP_by_PCR) %>% round (3)
-
+df.accuracy_predict(round(imp.data$predict.var.test,2), imp.data[,var.y]) %>% round (3)
+df.accuracy_predict(round(imp.data$predict.full_dicho,2), imp.data[,var.y]) %>% round (3)
 
 
 # Searching for clinical factors which are associated with errors ----------------------------------------------
@@ -271,79 +251,13 @@ factor.com  <- colnames(imp.data)[grep("^com",colnames(imp.data))]
 
 factor.med_com <- c(factor.med,factor.com)
 
-
-mf.find_select_bias <- 
-  
-  function(obj.rpart, Data, colnames.targ, threshPred = 0.5){
-    
-    for(i.factor in 1:length(colnames.targ)){
-      
-      correct <- obj.rpart$terms[[2]]
-      
-      Data$factor  <- Data[,colnames.targ[i.factor]]
-      Data$correct <- obj.rpart$y
-      Data$test <- 
-        as.numeric(predict(obj.rpart, Data)[,2] > threshPred) + 1
-      
-      if(class(Data$factor)!= "factor") 
-        Data$factor <- factor(
-          Data$factor,
-          levels = unique(Data$factor)[order(unique(Data$factor))]
-          )
-      
-      Data_factor_0 <- Data[Data$factor == levels(Data$factor)[1],]
-      Data_factor_1 <- Data[Data$factor == levels(Data$factor)[2],]
-      
-      res.fisher.factor_0 <- 
-        try(
-          fisher.test(
-            table(
-              Data_factor_0$test,
-              Data_factor_0$correct
-              )
-            )$estimate
-          )
-           
-      res.fisher.factor_1 <- 
-        try(
-          fisher.test(
-            table(
-              Data_factor_1$test,
-              Data_factor_1$correct
-            )
-          )$estimate
-        ) 
-      
-      res.fisher.total <- 
-        fisher.test(
-          table(
-            Data$test,
-            Data$correct
-            )
-          )$estimate
-      
-      if(class(res.fisher.factor_1)!='try-error') {
-        result.i <-
-          data.frame(
-            Bias=res.fisher.factor_1/res.fisher.total,
-            `OR at strata 0`=res.fisher.factor_0,
-            `OR at strata 1`=res.fisher.factor_1,
-            Total=res.fisher.total
-          )
-        result.i$factor <- colnames.targ[i.factor]
-        if('result' %in% ls()) result <- bind_rows(result, result.i)
-        if(!('result' %in% ls())) result <- result.i
-        }
-    }
-    return(result)
-}
+# simulation --------------------------------------------------------------
 
 test <- 
   mf.find_select_bias(
-    res.rpart.var.test, imp.data, factor.med_com
+    obj.predict = res.rpart.var.test, Data = imp.data, colnames.targ = factor.med_com
   )
 
-# simulation --------------------------------------------------------------
 
 n.itt <- 2000
 
@@ -362,7 +276,9 @@ res.itt.simul_mf.find_select_bias <-
         }
       test <- 
         mf.find_select_bias(
-          res.rpart.var.test, Data, factor.med_com
+          obj.predict = res.rpart.var.test, 
+          Data = Data, 
+          colnames.targ = factor.med_com
           )
       return(test)
     }
