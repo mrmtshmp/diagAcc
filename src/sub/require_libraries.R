@@ -36,7 +36,7 @@ packages.in.CRAN <- c(
   'tibble',
   'tidyr',
   "vegan"
-)
+  )
 
 # packages.in.Bioc <- c(
 #   "HMP16SData",
@@ -51,12 +51,12 @@ for(i in 1:length(packages.in.CRAN)){
   )
 }
 
-for(i in 1:length(packages.in.Bioc)){
-  if (!requireNamespace(packages.in.Bioc[i], quietly = TRUE)) BiocManager::install(packages.in.Bioc[i])
-  eval(
-    parse(text=sprintf("require(%s)", packages.in.Bioc[i]))
-  )
-}
+# for(i in 1:length(packages.in.Bioc)){
+#   if (!requireNamespace(packages.in.Bioc[i], quietly = TRUE)) BiocManager::install(packages.in.Bioc[i])
+#   eval(
+#     parse(text=sprintf("require(%s)", packages.in.Bioc[i]))
+#   )
+# }
 
 
 if(!require(ExploratoryDataAnalysis)){
