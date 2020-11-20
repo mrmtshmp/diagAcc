@@ -2,14 +2,6 @@
 #' 2020/06/16
 #' m.2020/07/10
 #' m.2020/10/07
-#' Dr.Ideguchi
-#' 
-#' Note: m.2020/07/10
-#' Change points can be referred in a note at note/note_200709.pdf.
-#' Note: m.2020/10/07
-#' Changes for manuscript revision. (mail:2020/10/05)
-
-
 
 dir.subroutine <- "./src/sub"
 

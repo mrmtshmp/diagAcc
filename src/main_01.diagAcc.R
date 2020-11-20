@@ -1,10 +1,6 @@
 #' Improve accuracy of the test in true negative subjects.
 #' 2020/06/16
 #' m.2020/07/10
-#' Dr.Ideguchi
-#' 
-#' Note: m.2020/07/10
-#' Change points can be referred in a note at note/note_200709.pdf.
 
 dir.subroutine <- "./src/sub"
 

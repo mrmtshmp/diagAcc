@@ -1,9 +1,5 @@
-#' Compare accuracy of the test bw subjects' subgroups.
-#' 2020/10/13
-#' Dr.Ideguchi
-#' 
+#' Compare accuracy of the test bw subjects' subgroups. 
 #' Note: 2020/10/13
-#' Changes for manuscript revision. (mail:2020/10/12)
 
 dir.subroutine <- "./src/sub"
 

@@ -1,7 +1,5 @@
 #' Make analysis data
 #' 2020/10/07
-#' Dr.Ideguchi
-
 
 dir.subroutine <- "./src/sub"
 
